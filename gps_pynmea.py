@@ -47,7 +47,7 @@ def decode(coord):
         return deg + " deg " + min + "." + tail + " min"
     except IndexError:
         print("GPS Data Cannot Be Aquired ... ")
-        sys.exit(0)
+        #sys.exit(0)
 
 ser = serial.Serial(port, baudrate = 9600, timeout = 0.5)
 
