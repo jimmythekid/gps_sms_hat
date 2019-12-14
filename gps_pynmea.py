@@ -38,12 +38,15 @@ def parseGPS(data):
 
 def decode(coord):
     # DDDMM.MMMMM -> DD deg MM.MMMMM min
-    v = coord.split(".")
-    head = v[0]
-    tail =  v[1]
-    deg = head[0:-2]
-    min = head[-2:]
-    return deg + " deg " + min + "." + tail + " min"
+    try:
+        v = coord.split(".")
+        head = v[0]
+        tail =  v[1]
+        deg = head[0:-2]
+        min = head[-2:]
+        return deg + " deg " + min + "." + tail + " min"
+    except ValueError:
+        print("GPS Data Cannot Be Aquired ... ")
 
 ser = serial.Serial(port, baudrate = 9600, timeout = 0.5)
 while True:
