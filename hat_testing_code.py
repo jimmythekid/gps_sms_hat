@@ -1,0 +1,240 @@
+['CGPSINFO: 3742.362316', 'N', '12206.303592', 'W', '121219', '194820.0', '124.0', '0.0', '51.9\r\n']
+$GPGSV, 3742.362316,N,12206.303592,W,121219,194820.0,124.0,0.0,51.9*7C
+Lat: 37.42362316
+Lng: 122.06303592
+Alt: 51.9
+out2: CGPSINFO: 3742.362312,N,12206.303593,W,121219,194825.0,124.0,0.0,51.9
+
+['CGPSINFO: 3742.362312', 'N', '12206.303593', 'W', '121219', '194825.0', '124.0', '0.0', '51.9\r\n']
+$GPGSV, 3742.362312,N,12206.303593,W,121219,194825.0,124.0,0.0,51.9*7C
+Lat: 37.42362312
+Lng: 122.06303593
+Alt: 51.9
+out2: CGPSINFO: 3742.362309,N,12206.303595,W,121219,194830.0,124.0,0.0,51.9
+
+['CGPSINFO: 3742.362309', 'N', '12206.303595', 'W', '121219', '194830.0', '124.0', '0.0', '51.9\r\n']
+$GPGSV, 3742.362309,N,12206.303595,W,121219,194830.0,124.0,0.0,51.9*74
+Lat: 37.42362309
+Lng: 122.06303595
+Alt: 51.9
+out2: CGPSINFO: 3742.362446,N,12206.303660,W,121219,194835.0,124.6,0.0,51.9
+
+['CGPSINFO: 3742.362446', 'N', '12206.303660', 'W', '121219', '194835.0', '124.6', '0.0', '51.9\r\n']
+$GPGSV, 3742.362446,N,12206.303660,W,121219,194835.0,124.6,0.0,51.9*72
+Lat: 37.42362446
+Lng: 122.0630366
+Alt: 51.9
+out2: CGPSINFO: 3742.362726,N,12206.303860,W,121219,195403.0,125.5,0.0,51.9
+
+['CGPSINFO: 3742.362726', 'N', '12206.303860', 'W', '121219', '195403.0', '125.5', '0.0', '51.9\r\n']
+$GPGSV, 3742.362726,N,12206.303860,W,121219,195403.0,125.5,0.0,51.9*73
+Lat: 37.42362726
+Lng: 122.0630386
+Alt: 51.9
+out2: CGPSINFO: 3742.362724,N,12206.303858,W,121219,195408.0,125.5,0.0,51.9
+
+
+
+
+
+import serial, time, pynmea2, re
+
+def serial_def():
+    ser = serial.Serial()
+    ser.port = "/dev/ttyUSB2"
+    ser.baudrate = 115200
+    ser.bytesize = serial.EIGHTBITS #number of bits per bytes
+    ser.parity = serial.PARITY_NONE #set parity check: no parity
+    ser.stopbits = serial.STOPBITS_ONE #number of stop bits
+    ser.timeout = 2              #timeout block read
+    ser.xonxoff = False     #disable software flow control
+    ser.rtscts = False     #disable hardware (RTS/CTS) flow control
+    ser.dsrdtr = False       #disable hardware (DSR/DTR) flow control
+    ser.writeTimeout = 2
+    ser.open()
+
+    if ser.isOpen():
+         print(ser.name + ' is open...')
+
+    ser.write("AT+CGPSINFO=0"+"\r\n")
+    ser.write("ATE1"+"\r\n")
+    ser.write("ATI"+"\r\n")
+    ser.write("AT+CGPS=1,1"+"\r\n")
+    ser.write("AT+CGPSOUT=8"+"\r\n")
+    ser.write("AT+CGPSINFO=5"+"\r\n")
+
+    time.sleep(1)
+    out=''
+    while True:
+        out += ser.read(1)
+        out2 = ser.readline()
+        #print("out1: " + out)
+        if re.match(r"CGPSINFO:", out2):
+            print("out2: " + out2)
+            print(out2.split(","))
+            out3 = ((out2.split(",")[0].split(": ")[1:] + out2.split(",")[1:-1] + out2.split(",")[-1].split("\r")[0:]))[0:-1]
+            msg = pynmea2.GGA('GP', 'GSV', out3)
+            
+            lat = str(float(out3[0].strip()[:-1])/100).split(".")[0]
+            lng = str(float(out3[2].strip()[:-1])/100).split(".")[0]
+
+            lat.dec = float(str(float(out3[0].strip()[:-1])/100).split(".")[1]) * 60
+            lng.dec = float(str(float(out3[2].strip()[:-1])/100).split(".")[1]) * 60
+
+            print(pynmea2.parse(str(msg)))
+            print("Lat: " + str(lat) + str(lat.dec)) #str(msg.lat))
+            print("Lng: " + str(lng) + str(lng.dec)) #str(msg.lon))
+            print("Alt: " + str(msg.altitude))
+        #print(pynmea2.parse(out))
+
+    ser.close()
+
+serial_def()
+
+
+out3 = ((out2.split(",")[0].split(":")[1:] + out2.split(",")[1:-1] + out2.split(",")[-1].split("\r")[0:]))[0:-1]
+
+
+out3 = ((out2.split(",")[0].split(":")[1:] + out2.split(",")[1:-1] + out2.split(",")[-1].split("\r")[0:]))[0:-1]
+
+print("Lat: " + str(float(out3[0])/100))
+
+
+
+
+import serial, time, pynmea2, re
+
+def serial_def():
+    ser = serial.Serial()
+    ser.port = "/dev/ttyUSB2"
+    ser.baudrate = 115200
+    ser.bytesize = serial.EIGHTBITS #number of bits per bytes
+    ser.parity = serial.PARITY_NONE #set parity check: no parity
+    ser.stopbits = serial.STOPBITS_ONE #number of stop bits
+    ser.timeout = 2              #timeout block read
+    ser.xonxoff = False     #disable software flow control
+    ser.rtscts = False     #disable hardware (RTS/CTS) flow control
+    ser.dsrdtr = False       #disable hardware (DSR/DTR) flow control
+    ser.writeTimeout = 2
+    ser.open()
+
+    if ser.isOpen():
+         print(ser.name + ' is open...')
+
+    ser.write("AT+CGPSINFO=0"+"\r\n")
+    ser.write("ATE1"+"\r\n")
+    ser.write("ATI"+"\r\n")
+    ser.write("AT+CGPS=1,1"+"\r\n")
+    ser.write("AT+CGPSOUT=8"+"\r\n")
+    ser.write("AT+CGPSINFO=5"+"\r\n")
+
+    time.sleep(1)
+    out=''
+    while True:
+        out += ser.read(1)
+        out2 = ser.readline()
+        #print("out1: " + out)
+        if re.match(r"CGPSINFO:", out2):
+            print("out2: " + out2)
+            print(out2.split(","))
+            out3 = ((out2.split(",")[0].split(": ")[1:] + out2.split(",")[1:-1] + out2.split(",")[-1].split("\r")[0:]))[0:-1]
+            msg = pynmea2.GGA('GP', 'GSV', out3)
+
+            lat = int(str(float(out3[0].strip()[:-1])/100).split(".")[0])
+            lng = int(str(float(out3[2].strip()[:-1])/100).split(".")[0])
+
+            latdec = float("." + str(float(out3[0].strip()[:-1])/100).split(".")[1]) * 60
+            lngdec = float("." + str(float(out3[2].strip()[:-1])/100).split(".")[1]) * 60
+
+            latmin = int(str(latdec).split(".")[0])
+            lngmin = int(str(lngdec).split(".")[0])
+
+            latsec = float("." + str(latdec).split(".")[1]) * 60
+            lngsec = float("." + str(lngdec).split(".")[1]) * 60
+
+            print(pynmea2.parse(str(msg)))
+            print("Latitude: " + str(lat) + " Degrees " + str(latmin) + " Minutes " + str(latsec) + " Seconds ") #str(msg.lat))
+            print("Longitude: " + str(lng) + " Degrees " + str(lngmin) + " Minutes " + str(lngsec) + " Seconds ") #str(msg.lon))
+            print("Alt: " + str(msg.altitude) + " Meters")
+        #print(pynmea2.parse(out))
+
+    ser.close()
+
+serial_def()
+
+
+
+
+
+
+import serial, time, pynmea2, re
+
+def serial_def():
+    ser = serial.Serial()
+    ser.port = "/dev/ttyUSB2"
+    ser.baudrate = 115200
+    ser.bytesize = serial.EIGHTBITS #number of bits per bytes
+    ser.parity = serial.PARITY_NONE #set parity check: no parity
+    ser.stopbits = serial.STOPBITS_ONE #number of stop bits
+    ser.timeout = 2              #timeout block read
+    ser.xonxoff = False     #disable software flow control
+    ser.rtscts = False     #disable hardware (RTS/CTS) flow control
+    ser.dsrdtr = False       #disable hardware (DSR/DTR) flow control
+    ser.writeTimeout = 2
+    ser.open()
+
+    if ser.isOpen():
+         print(ser.name + ' is open...')
+
+    ser.write("AT"+"\r\n")
+    ser.write("ATE1"+"\r\n")
+    ser.write("AT+CMFG=1"+"\r\n")
+    ser.write("AT+CSCA=\"+15105609375\"\r\n")
+    ser.write("AT+CMGS=\"15103037751\"\r\n")
+    ser.write("hello world")
+
+    time.sleep(1)
+    ser.flushInput()
+    ser.close()
+
+serial_def()
+
+
+
+
+
+import serial, time, re
+
+def serial_def():
+    ser = serial.Serial()
+    ser.port = "/dev/ttyUSB2"
+    ser.baudrate = 115200
+    ser.bytesize = serial.EIGHTBITS #number of bits per bytes
+    ser.parity = serial.PARITY_NONE #set parity check: no parity
+    ser.stopbits = serial.STOPBITS_ONE #number of stop bits
+    ser.timeout = 2              #timeout block read
+    ser.xonxoff = False     #disable software flow control
+    ser.rtscts = False     #disable hardware (RTS/CTS) flow control
+    ser.dsrdtr = False       #disable hardware (DSR/DTR) flow control
+    ser.writeTimeout = 2
+    ser.open()
+
+    if ser.isOpen():
+         print(ser.name + ' is open...')
+
+    ser.write("AT"+"\r\n")
+    ser.write("ATE1"+"\r\n")
+    ser.write("AT+CMFG=1"+"\r\n")
+    ser.write("AT+CSCA=\"5105609375\"\r\n")
+    ser.write("AT+CMGS=\"5103037751\"\r\n")
+    ser.write("hello world")
+
+    time.sleep(1)
+    ser.flushInput()
+    ser.close()
+
+serial_def()
+
+
+
+
