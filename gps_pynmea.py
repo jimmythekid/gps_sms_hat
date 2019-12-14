@@ -1,6 +1,6 @@
 # gps_pynmea.py
 # -*- coding: utf-8 -*-
-import serial, pynmea2
+import serial, pynmea2, sys
 
 port = "/dev/ttyUSB1"  # Output of NMEA String via serial port NOT for AT COMMANDS
 # http://www.python-exemplary.com/index_en.php?inhalt_links=navigation_en.inc.php&inhalt_mitte=raspi/en/serial.inc.php
@@ -47,8 +47,12 @@ def decode(coord):
         return deg + " deg " + min + "." + tail + " min"
     except IndexError:
         print("GPS Data Cannot Be Aquired ... ")
+        sys.exit(0)
 
 ser = serial.Serial(port, baudrate = 9600, timeout = 0.5)
+
+#ser.write("AT+CGPSINFO=0")
+
 while True:
     data = ser.readline()
     parseGPS(data)
