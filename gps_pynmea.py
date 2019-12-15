@@ -2,9 +2,26 @@
 # -*- coding: utf-8 -*-
 import serial, pynmea2, sys
 
-port = "/dev/ttyUSB1"  # Output of NMEA String via serial port NOT for AT COMMANDS
+PORT = "/dev/ttyUSB1"  # Output of NMEA String via serial port NOT for AT COMMANDS
 # http://www.python-exemplary.com/index_en.php?inhalt_links=navigation_en.inc.php&inhalt_mitte=raspi/en/serial.inc.php
-port_comm = "dev/ttyUSB2". # Comm port for talking to and sending AT Commands to HAT
+PORT_COMM = "dev/ttyUSB2". # Comm port for talking to and sending AT Commands to HAT
+
+
+class GPS_Trace:
+  def __init__(self, lat, lat_dir, lon, lon_dir, speed, course):
+    self.lat = lat
+    self.lat_dir = lat_dir
+    self.lon = lon
+    self.lon_dir = lon_dir
+    self.altitude = altitude
+    self.altitude_units = altitude_units
+    self.sat_count = sat_count
+    self.speed = speed
+    self.true_course = true_course
+    self.mag_var_dir = mag_var_dir
+    self.gps_qual = gps_qual
+
+
 
 def parseGPS(data):
 #    print "raw:", data
@@ -66,8 +83,8 @@ class GPS_Trace:
 
 
 
-ser = serial.Serial(port, baudrate = 9600, timeout = 0.5)
-#ser_com = serial.Serial(port_comm, baudrate = 115200, timeout = 0.5)
+ser = serial.Serial(PORT, baudrate = 115200, timeout = 0.5) #9600
+#ser_com = serial.Serial(PORT_COMM, baudrate = 115200, timeout = 0.5)
 #ser_com.write("AT+CGPS")
 
 while True:
