@@ -4,7 +4,7 @@ import serial, pynmea2, sys
 
 PORT = "/dev/ttyUSB1"  # Output of NMEA String via serial port NOT for AT COMMANDS
 # http://www.python-exemplary.com/index_en.php?inhalt_links=navigation_en.inc.php&inhalt_mitte=raspi/en/serial.inc.php
-PORT_COMM = "dev/ttyUSB2". # Comm port for talking to and sending AT Commands to HAT
+PORT_COMM = "dev/ttyUSB2" # Comm port for talking to and sending AT Commands to HAT
 
 
 class GPS_Trace:
