@@ -8,7 +8,13 @@ PORT_COMM = "dev/ttyUSB2" # Comm port for talking to and sending AT Commands to 
 
 
 class GPS_Trace:
-  def __init__(self, lat, lat_dir, lon, lon_dir, speed, course):
+  def __init__(self, lat, lat_dir, 
+                     lon, lon_dir,
+                     altitude, altitude_units,
+                     sat_count, 
+                     ts, speed, true_course,
+                     mag_var_dir, gps_qual):
+    self.ts = ts
     self.lat = lat
     self.lat_dir = lat_dir
     self.lon = lon
